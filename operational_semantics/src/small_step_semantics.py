@@ -6,6 +6,9 @@ class Expression:
     return '«{}»'.format(self.str())
   def __repr__(self):
     return '«{}»'.format(self.str())
+  def __eq__(self, other):
+    if other is None or type(self) != type(other): return False
+    return self.__dict__ == other.__dict__
 
 
 class Statement(Expression):
@@ -99,6 +102,9 @@ class Variable(Expression):
 class DoNothing(Statement):
   def __init__(self):
     self.reducible = False
+
+  def __eq__(self, other):
+    return isinstance(self, type(DoNothing()))
 
   def str(self):
     return 'Do-Nothing'
