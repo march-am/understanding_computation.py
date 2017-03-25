@@ -119,15 +119,15 @@ class Assign(Expression):
 
 
 class Machine:
-  def __init__(self, expression, environment):
-    self.expression = expression
+  def __init__(self, statement, environment):
+    self.statement = statement
     self.environment = environment
 
   def step(self):
-    self.expression = self.expression.reduce_exp(self.environment)
+    self.statement, self.environment = self.statement.reduce_exp(self.environment)
 
   def run(self):
-    while self.expression.reducible:
-      print(self.expression)
+    while self.statement.reducible:
+      print('{}, {}'.format(self.statement, self.environment))
       self.step()
-    print(self.expression)
+    print('{}, {}'.format(self.statement, self.environment))
