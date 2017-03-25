@@ -81,6 +81,15 @@ class LessThan(Expression):
       return Boolean(self.left.value < self.right.value)
 
 
+class Variable(Expression):
+  def __init__(self, name):
+    self.value = name
+    self.reducible = True
+
+  def str(self):
+    return str(self.value)
+
+
 class Machine:
   def __init__(self, expression):
     self.expression = expression
