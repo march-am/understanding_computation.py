@@ -164,6 +164,18 @@ class Sequence(Statement):
       return [Sequence(reduced_first, self.second), reduced_environment]
 
 
+class While(Statement):
+  def __init__(self, condition, body):
+    self.condition = condition
+    self.body = body
+    self.reducible = True
+
+  def str(self):
+    return 'While ({}) {{ {} }}'.format(self.condition, self.body)
+  def reduce_exp(self, environment):
+    return [If(self.condition, Sequence(self.body, self), DoNothing()), environment]
+
+
 class Machine:
   def __init__(self, statement, environment):
     self.statement = statement
