@@ -52,3 +52,17 @@ class Multiply(Expression):
       return Add(self.left, self.right.reduce_exp())
     else:
       return Number(self.left.value * self.right.value)
+
+
+class Machine:
+  def __init__(self, expression):
+    self.expression = expression
+
+  def step(self):
+    self.expression = self.expression.reduce_exp()
+
+  def run(self):
+    while self.expression.reducible:
+      print(self.expression)
+      self.step()
+    print(self.expression)
