@@ -147,6 +147,23 @@ class If(Statement):
         return [self.alternative, environment]
 
 
+class Sequence(Statement):
+  def __init__(self, first, second):
+    self.first = first
+    self.second = second
+    self.reducible = True
+
+  def str(self):
+    return '{}; {}'.format(self.first, self.second)
+
+  def reduce_exp(self, environment):
+    if self.first == DoNothing():
+      return [self.second, environment]
+    else:
+      reduced_first, reduced_environment = self.first.reduce_exp(environment)
+      return [Sequence(reduced_first, self.second), reduced_environment]
+
+
 class Machine:
   def __init__(self, statement, environment):
     self.statement = statement
