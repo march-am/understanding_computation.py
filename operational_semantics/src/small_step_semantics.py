@@ -54,6 +54,33 @@ class Multiply(Expression):
       return Number(self.left.value * self.right.value)
 
 
+class Boolean(Expression):
+  def __init__(self, value):
+    self.value = value
+    self.reducible = False
+
+  def str(self):
+    return str(self.value)
+
+
+class LessThan(Expression):
+  def __init__(self, left, right):
+    self.left = left
+    self.right = right
+    self.reducible = True
+
+  def str(self):
+    return '{} < {}'.format(self.left.str(), self.right.str())
+
+  def reduce_exp(self):
+    if self.left.reducible:
+      return LessThan(self.left.reduce_exp(), self.right)
+    elif self.right.reducible:
+      return LessThan(self.left, self.right.reduce_exp())
+    else:
+      return Boolean(self.left.value < self.right.value)
+
+
 class Machine:
   def __init__(self, expression):
     self.expression = expression
