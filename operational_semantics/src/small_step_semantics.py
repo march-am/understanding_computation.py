@@ -4,9 +4,12 @@
 class Expression:
   def __str__(self):
     return '«{}»'.format(self.str())
-
   def __repr__(self):
     return '«{}»'.format(self.str())
+
+
+class Statement(Expression):
+  pass
 
 
 class Number(Expression):
@@ -93,7 +96,7 @@ class Variable(Expression):
     return environment[self.name]
 
 
-class DoNothing(Expression):
+class DoNothing(Statement):
   def __init__(self):
     self.reducible = False
 
@@ -101,7 +104,7 @@ class DoNothing(Expression):
     return 'Do-Nothing'
 
 
-class Assign(Expression):
+class Assign(Statement):
   def __init__(self, name, expression):
     self.name = name
     self.expression = expression
