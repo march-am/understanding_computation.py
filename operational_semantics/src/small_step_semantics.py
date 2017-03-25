@@ -127,6 +127,26 @@ class Assign(Statement):
       return [DoNothing(), dict(environment.items() + [(self.name, self.expression)])]
 
 
+class If(Statement):
+  def __init__(self, condition, consequence, alternative):
+    self.condition = condition
+    self.consequence = consequence
+    self.alternative = alternative
+    self.reducible = True
+
+  def str(self):
+    return 'If ({}) {{ {} }} else {{ {} }}'.format(self.condition, self.consequence, self.alternative)
+
+  def reduce_exp(self, environment):
+    if self.condition.reducible:
+      return [If(self.condition.reduce_exp(environment), self.consequence, self.alternative), environment]
+    else:
+      if self.condition == Boolean(True):
+        return [self.consequence, environment]
+      elif self.condition == Boolean(False):
+        return [self.alternative, environment]
+
+
 class Machine:
   def __init__(self, statement, environment):
     self.statement = statement
