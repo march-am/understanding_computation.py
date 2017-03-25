@@ -4,9 +4,15 @@
 class Expression:
   def __str__(self):
     return '«{}»'.format(self.str())
-
   def __repr__(self):
     return '«{}»'.format(self.str())
+  def __eq__(self, other):
+    if other is None or type(self) != type(other): return False
+    return self.__dict__ == other.__dict__
+
+
+class Statement(Expression):
+  pass
 
 
 class Number(Expression):
@@ -93,16 +99,93 @@ class Variable(Expression):
     return environment[self.name]
 
 
-class Machine:
-  def __init__(self, expression, environment):
+class DoNothing(Statement):
+  def __init__(self):
+    self.reducible = False
+
+  def __eq__(self, other):
+    return isinstance(self, type(DoNothing()))
+
+  def str(self):
+    return 'Do-Nothing'
+
+
+class Assign(Statement):
+  def __init__(self, name, expression):
+    self.name = name
     self.expression = expression
+    self.reducible = True
+
+  def str(self):
+    return '{} = {}'.format(self.name, self.expression.str())
+
+  def reduce_exp(self, environment):
+    if self.expression.reducible:
+      return [Assign(self.name, self.expression.reduce_exp(environment)), environment]
+    else:
+      # updateすると元配列を破壊するのでdictコンストラクタで新しいdictを返す
+      return [DoNothing(), dict(environment.items() + [(self.name, self.expression)])]
+
+
+class If(Statement):
+  def __init__(self, condition, consequence, alternative):
+    self.condition = condition
+    self.consequence = consequence
+    self.alternative = alternative
+    self.reducible = True
+
+  def str(self):
+    return 'If ({}) {{ {} }} else {{ {} }}'.format(self.condition, self.consequence, self.alternative)
+
+  def reduce_exp(self, environment):
+    if self.condition.reducible:
+      return [If(self.condition.reduce_exp(environment), self.consequence, self.alternative), environment]
+    else:
+      if self.condition == Boolean(True):
+        return [self.consequence, environment]
+      elif self.condition == Boolean(False):
+        return [self.alternative, environment]
+
+
+class Sequence(Statement):
+  def __init__(self, first, second):
+    self.first = first
+    self.second = second
+    self.reducible = True
+
+  def str(self):
+    return '{}; {}'.format(self.first, self.second)
+
+  def reduce_exp(self, environment):
+    if self.first == DoNothing():
+      return [self.second, environment]
+    else:
+      reduced_first, reduced_environment = self.first.reduce_exp(environment)
+      return [Sequence(reduced_first, self.second), reduced_environment]
+
+
+class While(Statement):
+  def __init__(self, condition, body):
+    self.condition = condition
+    self.body = body
+    self.reducible = True
+
+  def str(self):
+    return 'While ({}) {{ {} }}'.format(self.condition, self.body)
+  def reduce_exp(self, environment):
+    return [If(self.condition, Sequence(self.body, self), DoNothing()), environment]
+
+
+class Machine:
+  def __init__(self, statement, environment):
+    self.statement = statement
     self.environment = environment
 
   def step(self):
-    self.expression = self.expression.reduce_exp(self.environment)
+    self.statement, self.environment = self.statement.reduce_exp(self.environment)
 
   def run(self):
-    while self.expression.reducible:
-      print(self.expression)
+    while self.statement.reducible:
+      print('{}, {}'.format(self.statement, self.environment))
       self.step()
-    print(self.expression)
+    print('{}, {}'.format(self.statement, self.environment))
