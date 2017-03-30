@@ -118,3 +118,46 @@ Machine(
   { 'x': Number(1) }
 ).run()
 ```
+
+
+## p.41~ Big Step Semantics
+
+### p.43 式の実装
+
+```python
+Number(23).evaluate({})
+# => «23»
+
+Variable('x').evaluate({ 'x': Number(23) })
+# => «23»
+
+LessThan(
+  Add(Variable('x'), Number(2)),
+  Variable('y')
+).evaluate({ 'x': Number(2), 'y': Number(5) })
+# => «True»
+```
+
+### p.44 Sequenceの実装
+
+```python
+statement = Sequence(
+  Assign('x', Add(Number(1), Number(1))),
+  Assign('y', Add(Variable('x'), Number(3)))
+)
+# => «x = 1 + 1; y = x + 3»
+statement.evaluate({})
+# => {'y': «5», 'x': «2»}
+```
+
+### p.45 Whileの実装
+
+```python
+statement = While(
+  LessThan(Variable('x'), Number(5)),
+  Assign('x', Multiply(Variable('x'), Number(3)))
+)
+# => «while (x < 5) { x = x * 3 }»
+statement.evaluate({ 'x': Number(1) })
+# => {'x': «9»}
+```
