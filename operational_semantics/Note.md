@@ -7,23 +7,21 @@ Add(
   Multiply(Number(1), Number(2)),
   Multiply(Number(3), Number(4))
 )
+# => «1 * 2 + 3 * 4»
 ```
 
 ### p.27 式の簡約の実現
 
 ```python
-
 expression = Add(
   Multiply(Number(1), Number(2)),
   Multiply(Number(3), Number(4))
 )
-
+# => «1 * 2 + 3 * 4»
 expression.reducible
 expression.reduce_exp()
 #...
-
 ```
-
 
 ### p.28 仮想機械の実行
 
@@ -35,7 +33,6 @@ Machine(
   )
 ).run()
 ```
-
 
 ## p.29 Boolean, LessThanの実装後のスニペット
 

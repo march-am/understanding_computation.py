@@ -172,6 +172,7 @@ class While(Statement):
 
   def str(self):
     return 'While ({}) {{ {} }}'.format(self.condition, self.body)
+
   def reduce_exp(self, environment):
     return [If(self.condition, Sequence(self.body, self), DoNothing()), environment]
 
