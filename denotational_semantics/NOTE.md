@@ -66,3 +66,34 @@ la(environment)
 # False
 ```
 
+### p.51 文の実装 Assign
+
+```Python
+statement = Assign('y', Add(Variable('x'), Number(1)))
+print statement
+# «y = x + 1»
+statement.to_py()
+# "lambda e: dict(e.items() + [(y, (lambda e: (lambda e: e['x'])(e) + (lambda e: 1)(e))(e))])"
+la = eval(statement.to_py())
+print la
+# <function <lambda> at 0x1085fc410>
+la({ 'x': 3 })
+# {'y': 4, 'x': 3}
+```
+
+### p.52 文の実装 While
+
+```Python
+statement = While(
+  LessThan(Variable('x'), Number(5)),
+  Assign('x', Multiply(Variable('x'), Number(3)))
+)
+# «while (x < 5) { x = x * 3 }»
+statement.to_py()
+# "lambda e: inline_while(lambda e: (lambda e: e['x'])(e) < (lambda e: 5)(e), lambda e: dict(e.items() + [('x', (lambda e: (lambda e: e['x'])(e) * (lambda e: 3)(e))(e))]), e)"
+la = eval(statement.to_py())
+print la
+# <function <lambda> at 0x1064275f0>
+la({ 'x': 1 })
+# {'x': 9}
+```
