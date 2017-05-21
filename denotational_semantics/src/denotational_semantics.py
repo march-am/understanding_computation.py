@@ -15,3 +15,8 @@ class Boolean(Boolean):
   def to_py(self):
     return 'lambda e: {}'.format(self.value)
 
+
+class Variable(Variable):
+  def to_py(self):
+    return "lambda e: e['{}']".format(self.name)
+

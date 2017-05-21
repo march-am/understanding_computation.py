@@ -21,3 +21,19 @@ print la
 la({})
 # False
 ```
+
+### p.49 式の実装 Variable
+
+```Python
+exp = Variable('x')
+print exp
+# «x»
+exp.to_py()
+# 'lambda e: e[x]'
+la = eval(exp.to_py())
+print la
+# <function <lambda> at 0x10dd6b410>
+la({ 'x': 7 })
+# 7
+```
+
